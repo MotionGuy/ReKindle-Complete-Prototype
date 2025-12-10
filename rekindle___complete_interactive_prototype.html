@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReKindle - Complete Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 1000;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 50px 20px 16px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .top-bar-title {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .top-bar-action {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 1.2em;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 8px 0 24px;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .nav-icon {
+            font-size: 1.5em;
+        }
+        
+        .nav-label {
+            font-size: 0.7em;
+            color: #666;
+        }
+        
+        .nav-item.active .nav-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+        
+        .content.center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .hero-icon {
+            font-size: 5em;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .hero-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        
+        .hero-subtitle {
+            font-size: 1em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 280px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .card:active {
+            transform: scale(0.98);
+        }
+        
+        .card-header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .card-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .card-subtitle {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .toggle-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: #e0e0e0;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #ffd700;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            left: 24px;
+        }
+        
+        .countdown-box {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .countdown-display {
+            font-size: 2em;
+            font-weight: 600;
+            color: #333;
+            font-family: monospace;
+        }
+        
+        .countdown-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .mutual-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+        
+        .mutual-card.rekindle-active {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-top: 8px;
+            background: #ffd700;
+            color: #333;
+        }
+        
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .notification-item.unread {
+            background: #f0f4ff;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            max-width: 70%;
+        }
+        
+        .message-bubble.sent {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-bubble.received {
+            background: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-input {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            padding: 12px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .message-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 1em;
+        }
+        
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            margin-bottom: 16px;
+        }
+        
+        .toast {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .toast.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+            
+            <!-- Welcome Screen -->
+            <div class="screen active" id="welcome">
+                <div class="content center">
+                    <div class="hero-icon">🔥</div>
+                    <h1 class="hero-title">Welcome to ReKindle</h1>
+                    <p class="hero-subtitle">
+                        Meet people at events and keep meaningful connections alive
+                    </p>
+                    <button class="btn btn-primary" onclick="goTo('events')">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Events Screen -->
+            <div class="screen" id="events">
+                <div class="top-bar">
+                    <div></div>
+                    <h1 class="top-bar-title">Events</h1>
+                    <button class="top-bar-action" onclick="goTo('search')">🔍</button>
+                </div>
+                <div class="content">
+                    <div class="card" onclick="goTo('event-detail')">
+                        <div class="card-header">
+                            <div class="icon-box">🎮</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">GameDev Mixer</div>
+                                <div class="card-subtitle">📅 Today 7:00 PM • 👥 24 attending</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" onclick="toast('Check-in opens soon')">
+                        <div class="card-header">
+                            <div class="icon-box">💼</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">Career Fair</div>
+                                <div class="card-subtitle">📅 Tomorrow 10:00 AM • 👥 156 attending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item active" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Event Detail Screen -->
+            <div class="screen" id="event-detail">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('events')">←</button>
+                    <h1 class="top-bar-title">Event Details</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 4em; margin-bottom: 16px;">🎮</div>
+                        <h2 style="font-size: 1.5em; margin-bottom: 8px;">GameDev Mixer</h2>
+                        <p style="color: #666; margin-bottom: 24px;">Connect with fellow game developers</p>
+                        
+                        <div style="text-align: left; background: white; padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+                            <div style="margin-bottom: 12px;">📅 Today, January 15 at 7:00 PM</div>
+                            <div style="margin-bottom: 12px;">📍 Engineering Hall, Room 204</div>
+                            <div>👥 24 people attending</div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="goTo('attendees')">
+                            Check In & Star Attendees
+                        </button>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Attendees Screen -->
+            <div class="screen" id="attendees">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('events')">←</button>
+                    <h1 class="top-bar-title">Attendees</h1>
+                    <button class="top-bar-action" onclick="goTo('events')">Done</button>
+                </div>
+                <div class="content">
+                    <p style="margin-bottom: 16px; color: #666;">Star people you connected with!</p>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="avatar">JM</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">Jordan Martinez</div>
+                                <div class="card-subtitle">Computer Science • Junior</div>
+                            </div>
+                            <button style="font-size: 1.5em; background: none; border: none; cursor: pointer;" onclick="toggleStar(this); triggerMutual()">⭐</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="avatar">TK</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">Taylor Kim</div>
+                                <div class="card-subtitle">Game Design • Sophomore</div>
+                            </div>
+                            <button style="font-size: 1.5em; background: none; border: none; cursor: pointer;" onclick="toggleStar(this)">⭐</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ReKindle Screen -->
+            <div class="screen" id="rekindle">
+                <div class="top-bar">
+                    <div></div>
+                    <h1 class="top-bar-title">ReKindle</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <div class="toggle-container">
+                        <div class="toggle-header">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px; font-size: 1.1em;">🔥 Light Your Flame</div>
+                                <div style="font-size: 0.85em; color: #666;">Open to reconnecting for 72 hours</div>
+                            </div>
+                            <div class="toggle-switch" id="rekindleToggle" onclick="toggleRekindle()">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div id="countdownContainer" style="display: none;">
+                            <div class="countdown-box">
+                                <div class="countdown-display" id="countdown">71:45:32</div>
+                                <div class="countdown-label">Time remaining</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 16px; font-size: 1.2em;">Your Connections</h3>
+                    
+                    <div id="mutuals-list">
+                        <p style="text-align: center; color: #666; padding: 40px 20px;">
+                            No mutual connections yet. Star people at events to make connections!
+                        </p>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item active" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Notifications Screen -->
+            <div class="screen" id="notifications">
+                <div class="top-bar">
+                    <div></div>
+                    <h1 class="top-bar-title">Notifications</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <div class="notification-item unread">
+                        <div class="avatar">🎉</div>
+                        <div style="flex: 1;">
+                            <div class="card-title">New Mutual Connection!</div>
+                            <div class="card-subtitle">You and Jordan Martinez are mutuals</div>
+                            <div style="font-size: 0.8em; color: #999; margin-top: 4px;">2 minutes ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="avatar">🔔</div>
+                        <div style="flex: 1;">
+                            <div class="card-title">Event Reminder</div>
+                            <div class="card-subtitle">GameDev Mixer starts in 1 hour</div>
+                            <div style="font-size: 0.8em; color: #999; margin-top: 4px;">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item active" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Profile Screen -->
+            <div class="screen" id="profile">
+                <div class="top-bar">
+                    <div></div>
+                    <h1 class="top-bar-title">Profile</h1>
+                    <button class="top-bar-action" onclick="goTo('settings')">⚙️</button>
+                </div>
+                <div class="content center">
+                    <div class="avatar" style="width: 80px; height: 80px; font-size: 2em; margin-bottom: 16px;">AC</div>
+                    <h2 style="font-size: 1.5em; margin-bottom: 8px;">Alex Chen</h2>
+                    <p style="color: #666; margin-bottom: 24px;">Computer Science • Junior</p>
+                    
+                    <div style="width: 100%; max-width: 300px;">
+                        <div class="card">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: 600; color: #667eea;" id="stat-events">1</div>
+                                <div style="font-size: 0.9em; color: #666;">Events Attended</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: 600; color: #667eea;" id="stat-mutuals">0</div>
+                                <div style="font-size: 0.9em; color: #666;">Mutual Connections</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item active" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Settings Screen -->
+            <div class="screen" id="settings">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('profile')">←</button>
+                    <h1 class="top-bar-title">Settings</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <h3 style="margin-bottom: 12px; color: #666; font-size: 0.9em;">NOTIFICATIONS</h3>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <div class="card-title">ReKindle Alerts</div>
+                            <div class="card-subtitle">When mutuals turn on ReKindle</div>
+                        </div>
+                        <div class="toggle-switch active">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <div class="card-title">Event Reminders</div>
+                            <div class="card-subtitle">Upcoming events you're attending</div>
+                        </div>
+                        <div class="toggle-switch active">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 24px 0 12px; color: #666; font-size: 0.9em;">ACCOUNT</h3>
+                    
+                    <div class="card" onclick="toast('Edit profile coming soon')">
+                        <div class="card-title">Edit Profile</div>
+                    </div>
+                    
+                    <div class="card" onclick="goTo('help')">
+                        <div class="card-title">Help & Support</div>
+                    </div>
+                    
+                    <div class="card" onclick="toast('Logout')">
+                        <div class="card-title" style="color: #ff4444;">Logout</div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Screen -->
+            <div class="screen" id="search">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('events')">←</button>
+                    <h1 class="top-bar-title">Search Events</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <input type="text" class="search-bar" placeholder="Search for events...">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="icon-box">🎮</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">GameDev Mixer</div>
+                                <div class="card-subtitle">Today 7:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Help Screen -->
+            <div class="screen" id="help">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('settings')">←</button>
+                    <h1 class="top-bar-title">Help & Support</h1>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <div class="card">
+                        <div class="card-title">How does starring work?</div>
+                        <div class="card-subtitle" style="margin-top: 8px; line-height: 1.6;">
+                            Stars are completely private. When you star someone, they won't know unless they star you back, creating a mutual connection.
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">What is ReKindle?</div>
+                        <div class="card-subtitle" style="margin-top: 8px; line-height: 1.6;">
+                            ReKindle lets you signal to mutual connections that you're open to reconnecting, with a 72-hour window.
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Contact Support</div>
+                        <div class="card-subtitle" style="margin-top: 8px;">support@rekindle.app</div>
+                    </div>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Screen -->
+            <div class="screen" id="chat">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goTo('rekindle')">←</button>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="avatar" style="width: 30px; height: 30px; font-size: 0.8em;">JM</div>
+                        <h1 class="top-bar-title">Jordan Martinez</h1>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="content">
+                    <div class="message-bubble received">
+                        Hey! Great meeting you at the GameDev Mixer!
+                    </div>
+                    <div class="message-bubble sent">
+                        Likewise! Your game project sounds amazing 🎮
+                    </div>
+                </div>
+                <div class="message-input">
+                    <input type="text" placeholder="Type a message...">
+                    <button class="send-btn">➤</button>
+                </div>
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="goTo('events')">
+                        <div class="nav-icon">🎉</div>
+                        <div class="nav-label">Events</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('rekindle')">
+                        <div class="nav-icon">🔥</div>
+                        <div class="nav-label">ReKindle</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Alerts</div>
+                    </button>
+                    <button class="nav-item" onclick="goTo('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Toast Notification -->
+            <div class="toast" id="toast">
+                <div id="toast-msg">Notification</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let hasMutual = false;
+        let rekindleActive = false;
+        let countdownInterval = null;
+        
+        function goTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function toast(msg) {
+            const toastEl = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 2500);
+        }
+        
+        function toggleStar(btn) {
+            btn.textContent = btn.textContent === '⭐' ? '🌟' : '⭐';
+        }
+        
+        function triggerMutual() {
+            if (hasMutual) return;
+            hasMutual = true;
+            
+            setTimeout(() => {
+                toast('🎉 New mutual connection with Jordan Martinez!');
+                document.getElementById('stat-mutuals').textContent = '1';
+                
+                updateMutualsList();
+            }, 1000);
+        }
+        
+        function toggleRekindle() {
+            const toggle = document.getElementById('rekindleToggle');
+            const countdownContainer = document.getElementById('countdownContainer');
+            
+            rekindleActive = !rekindleActive;
+            
+            if (rekindleActive) {
+                toggle.classList.add('active');
+                countdownContainer.style.display = 'block';
+                toast('🔥 ReKindle activated! Your flame will stay lit for 72 hours');
+                startCountdown();
+            } else {
+                toggle.classList.remove('active');
+                countdownContainer.style.display = 'none';
+                toast('ReKindle deactivated');
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+            
+            updateMutualsList();
+        }
+        
+        function startCountdown() {
+            let hours = 71, minutes = 45, seconds = 32;
+            
+            countdownInterval = setInterval(() => {
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 59;
+                    minutes--;
+                }
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                }
+                if (hours < 0) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const display = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('countdown').textContent = display;
+            }, 1000);
+        }
+        
+        function updateMutualsList() {
+            const listEl = document.getElementById('mutuals-list');
+            
+            if (!hasMutual) {
+                listEl.innerHTML = `
+                    <p style="text-align: center; color: #666; padding: 40px 20px;">
+                        No mutual connections yet. Star people at events to make connections!
+                    </p>
+                `;
+                return;
+            }
+            
+            const cardClass = rekindleActive ? 'mutual-card rekindle-active' : 'mutual-card';
+            const badge = rekindleActive ? '<div class="badge">🔥 Both Lit!</div>' : '';
+            
+            listEl.innerHTML = `
+                <div class="${cardClass}" onclick="goTo('chat')">
+                    <div class="card-header">
+                        <div class="avatar">JM</div>
+                        <div style="flex: 1;">
+                            <div class="card-title">Jordan Martinez</div>
+                            <div class="card-subtitle">Computer Science • Junior</div>
+                            ${badge}
+                        </div>
+                        <div style="font-size: 1.2em;">💬</div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
