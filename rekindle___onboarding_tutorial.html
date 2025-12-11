@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReKindle - Onboarding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .skip-btn {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.3s;
+        }
+        
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .onboarding-slider {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px 120px;
+            text-align: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+        
+        .slide-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .slide-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .slide-3 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+        }
+        
+        .slide-4 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .slide-5 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #333;
+        }
+        
+        .slide-icon {
+            font-size: 6em;
+            margin-bottom: 32px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .slide-title {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .slide-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            opacity: 0.95;
+            max-width: 280px;
+        }
+        
+        .permission-section {
+            margin-top: 32px;
+            width: 100%;
+        }
+        
+        .permission-btn {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .permission-btn.primary {
+            background: #333;
+            color: white;
+        }
+        
+        .permission-btn.primary:hover {
+            background: #1a1a1a;
+            transform: translateY(-2px);
+        }
+        
+        .permission-btn.secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+        
+        .permission-btn.secondary:hover {
+            background: rgba(0, 0, 0, 0.15);
+        }
+        
+        .maybe-later {
+            margin-top: 16px;
+            font-size: 0.9em;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .maybe-later:hover {
+            text-decoration: underline;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 32px;
+            background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
+        }
+        
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .slide-3 .dot {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .slide-3 .dot.active {
+            background: #333;
+        }
+        
+        .slide-5 .dot {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .slide-5 .dot.active {
+            background: #333;
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slide-3 .next-btn {
+            background: #333;
+            color: white;
+        }
+        
+        .slide-5 .next-btn {
+            background: #333;
+            color: white;
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin-top: 24px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .feature-icon {
+            font-size: 1.5em;
+        }
+        
+        .feature-text {
+            flex: 1;
+            font-size: 0.95em;
+        }
+        
+        .completion-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            z-index: 30;
+        }
+        
+        .completion-screen.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .completion-icon {
+            font-size: 6em;
+            margin-bottom: 24px;
+        }
+        
+        .completion-title {
+            font-size: 2.2em;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .completion-text {
+            font-size: 1.1em;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+            <button class="skip-btn" id="skipBtn" onclick="skipOnboarding()">Skip</button>
+            
+            <div class="onboarding-slider">
+                <!-- Slide 1: Welcome -->
+                <div class="slide slide-1 active" data-slide="1">
+                    <div class="slide-icon">🔥</div>
+                    <h2 class="slide-title">Welcome to ReKindle</h2>
+                    <p class="slide-description">
+                        Connect with people you meet at events and keep relationships alive
+                    </p>
+                </div>
+                
+                <!-- Slide 2: How It Works -->
+                <div class="slide slide-2" data-slide="2">
+                    <div class="slide-icon">⭐</div>
+                    <h2 class="slide-title">Star People You Meet</h2>
+                    <p class="slide-description">
+                        After events, star people you connected with. They'll only know if it's mutual!
+                    </p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <div class="feature-text">Your stars are completely private</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎉</div>
+                            <div class="feature-text">Get notified about mutual connections</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3: ReKindle Feature -->
+                <div class="slide slide-3" data-slide="3">
+                    <div class="slide-icon">🔥</div>
+                    <h2 class="slide-title">Light Your Flame</h2>
+                    <p class="slide-description">
+                        Turn on ReKindle for 72 hours to let mutual connections know you're open to reconnecting
+                    </p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🕶️</div>
+                            <div class="feature-text">Anonymous notifications until mutual</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⏱️</div>
+                            <div class="feature-text">Auto-closes after 72 hours</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 4: Navigator -->
+                <div class="slide slide-4" data-slide="4">
+                    <div class="slide-icon">🧭</div>
+                    <h2 class="slide-title">Grow Your Relationships</h2>
+                    <p class="slide-description">
+                        Navigator suggests personalized missions to help you stay connected with people you care about
+                    </p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-text">Smart conversation starters</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📅</div>
+                            <div class="feature-text">Meetup suggestions</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-text">Relationship health tracking</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 5: Permissions -->
+                <div class="slide slide-5" data-slide="5">
+                    <div class="slide-icon">🔔</div>
+                    <h2 class="slide-title">Stay Connected</h2>
+                    <p class="slide-description">
+                        Enable notifications and camera access for the best experience
+                    </p>
+                    <div class="permission-section">
+                        <button class="permission-btn primary" onclick="requestNotifications()">
+                            🔔 Enable Notifications
+                        </button>
+                        <button class="permission-btn primary" onclick="requestCamera()">
+                            📷 Allow Camera Access
+                        </button>
+                        <div class="maybe-later" onclick="completeOnboarding()">
+                            Maybe Later
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls" id="controls">
+                <div class="progress-dots" id="progressDots">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <button class="next-btn" id="nextBtn" onclick="nextSlide()">Next</button>
+            </div>
+            
+            <!-- Completion Screen -->
+            <div class="completion-screen" id="completionScreen">
+                <div class="completion-icon">🎉</div>
+                <h2 class="completion-title">You're All Set!</h2>
+                <p class="completion-text">
+                    Start attending events, meet new people, and build meaningful connections
+                </p>
+                <button class="start-btn" onclick="startApp()">Get Started</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+        
+        function updateSlide() {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active', 'prev');
+            });
+            
+            // Show current slide
+            const current = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+            current.classList.add('active');
+            
+            // Mark previous slides
+            for (let i = 1; i < currentSlide; i++) {
+                const prevSlide = document.querySelector(`.slide[data-slide="${i}"]`);
+                prevSlide.classList.add('prev');
+            }
+            
+            // Update progress dots
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                if (index + 1 === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Update button text and visibility
+            const nextBtn = document.getElementById('nextBtn');
+            const skipBtn = document.getElementById('skipBtn');
+            
+            if (currentSlide === totalSlides) {
+                nextBtn.style.display = 'none';
+                skipBtn.style.display = 'none';
+            } else {
+                nextBtn.textContent = 'Next';
+                nextBtn.style.display = 'block';
+                skipBtn.style.display = 'block';
+            }
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+        
+        function skipOnboarding() {
+            completeOnboarding();
+        }
+        
+        function requestNotifications() {
+            alert('🔔 Notification permission requested!\n\nIn a real app, this would trigger:\nNotification.requestPermission()');
+            // Simulate permission granted
+            setTimeout(() => {
+                alert('✅ Notifications enabled!');
+            }, 500);
+        }
+        
+        function requestCamera() {
+            alert('📷 Camera permission requested!\n\nIn a real app, this would trigger:\nnavigator.mediaDevices.getUserMedia({ video: true })');
+            // Simulate permission granted
+            setTimeout(() => {
+                alert('✅ Camera access granted!');
+            }, 500);
+        }
+        
+        function completeOnboarding() {
+            document.getElementById('completionScreen').classList.add('show');
+        }
+        
+        function startApp() {
+            alert('🚀 Launching ReKindle!\n\nIn a real app, you would now see:\n• Empty event list\n• "Find Events Near You" CTA\n• Profile completion prompt');
+        }
+        
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
