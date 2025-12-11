@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReKindle - Complete App Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            max-width: 390px;
+            width: 100%;
+            height: 844px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 10px solid #1a1a1a;
+            position: relative;
+        }
+        
+        .status-bar {
+            background: white;
+            padding: 8px 20px 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .screen {
+            display: none;
+            height: calc(844px - 100px);
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+        
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .back-btn, .close-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            border: none;
+            color: white;
+        }
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        /* Event Details Screen */
+        .event-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            margin: -20px -20px 20px;
+            border-radius: 0 0 24px 24px;
+        }
+        
+        .event-category {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .event-title-large {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .event-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .meta-icon {
+            font-size: 18px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+        
+        .section-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .attendee-avatars {
+            display: flex;
+            margin-top: 12px;
+        }
+        
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-left: -12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .avatar-circle:first-child {
+            margin-left: 0;
+        }
+        
+        .avatar-more {
+            background: #e0e0e0;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        /* Profile Editor */
+        .profile-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            margin: -20px -20px 20px;
+        }
+        
+        .avatar-upload {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 16px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .avatar-upload::after {
+            content: '📷';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .profile-email {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .interests-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .chip {
+            padding: 8px 14px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .chip-remove {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        
+        /* Settings Screen */
+        .settings-group {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        
+        .settings-group-title {
+            padding: 16px 20px;
+            background: #f9f9f9;
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .setting-description {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .toggle-switch {
+            width: 51px;
+            height: 31px;
+            background: #e0e0e0;
+            border-radius: 31px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #667eea;
+        }
+        
+        .toggle-knob {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active .toggle-knob {
+            left: 22px;
+        }
+        
+        .setting-value {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .setting-chevron {
+            color: #ccc;
+            font-size: 18px;
+        }
+        
+        /* Chat Interface */
+        .chat-header {
+            background: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .chat-info {
+            flex: 1;
+        }
+        
+        .chat-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .chat-status {
+            font-size: 12px;
+            color: #4ecdc4;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #4ecdc4;
+            border-radius: 50%;
+        }
+        
+        .chat-messages {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 500px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 80%;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .message.received .message-bubble {
+            background: white;
+            color: #1a1a1a;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            text-align: right;
+        }
+        
+        .message.received .message-time {
+            text-align: left;
+        }
+        
+        .context-banner {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .context-icon {
+            font-size: 20px;
+        }
+        
+        .context-text {
+            flex: 1;
+            font-size: 12px;
+            color: #856404;
+        }
+        
+        .chat-input-container {
+            background: white;
+            padding: 12px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: sticky;
+            bottom: 60px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #999;
+            font-size: 20px;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: #667eea;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .nav-badge {
+            position: absolute;
+            top: -4px;
+            right: 20px;
+            background: #ff4757;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>📶 📡 🔋</span>
+        </div>
+        
+        <!-- Event Details Screen -->
+        <div class="screen active" id="eventDetails">
+            <div class="event-hero">
+                <button class="back-btn" onclick="navigateTo('events')">←</button>
+                <span class="event-category">🎮 GAMING</span>
+                <h1 class="event-title-large">GameDev Mixer 2025</h1>
+                <div class="event-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>Jan 15, 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">🕐</span>
+                        <span>6:00 PM</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📍</span>
+                        <span>Student Center</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">👥</span>
+                        <span>24 attending</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="section">
+                    <div class="section-title">About This Event</div>
+                    <div class="section-text">
+                        Join us for an evening of game development networking! Meet indie developers, designers, and gaming enthusiasts. Share your projects, get feedback, and make meaningful connections in the gaming industry.
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Attendees (24)</div>
+                    <div class="attendee-avatars">
+                        <div class="avatar-circle" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">👩‍💻</div>
+                        <div class="avatar-circle" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">🎨</div>
+                        <div class="avatar-circle" style="background: linear-gradient(135deg, #f7b731, #f5a623);">🎮</div>
+                        <div class="avatar-circle" style="background: linear-gradient(135deg, #5f27cd, #341f97);">📱</div>
+                        <div class="avatar-circle avatar-more">+20</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="navigateTo('stars')" style="width: 100%; margin-top: 12px;">
+                        View All Attendees
+                    </button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Hosted by</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="avatar-circle" style="background: linear-gradient(135deg, #667eea, #764ba2); width: 48px; height: 48px;">🎯</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1a1a1a;">UCI Gaming Club</div>
+                            <div style="font-size: 13px; color: #999;">124 members</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">
+                        Share Event
+                    </button>
+                    <button class="btn btn-primary" onclick="showToast('Checked into event!')">
+                        Check In
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Editor Screen -->
+        <div class="screen" id="profile">
+            <div class="header">
+                <div class="header-top">
+                    <button class="back-btn" onclick="navigateTo('settings')">←</button>
+                    <button class="btn-secondary" onclick="saveProfile()" style="padding: 8px 16px; font-size: 14px;">Save</button>
+                </div>
+                <div class="header-title">Edit Profile</div>
+            </div>
+            
+            <div class="profile-header">
+                <div class="avatar-upload" onclick="showToast('Photo upload coming soon!')">
+                    👤
+                </div>
+                <div class="profile-name">Alex Chen</div>
+                <div class="profile-email">alex@example.com</div>
+            </div>
+            
+            <div class="content">
+                <div class="section">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" value="Alex Chen" id="profileName">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-textarea" placeholder="Tell people about yourself..." id="profileBio">Game developer and UI/UX enthusiast. Always looking to collaborate on indie projects!</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-input" value="Irvine, CA" id="profileLocation">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Interests</label>
+                        <div class="interests-chips">
+                            <div class="chip">🎮 Game Dev <span class="chip-remove">×</span></div>
+                            <div class="chip">💻 Tech <span class="chip-remove">×</span></div>
+                            <div class="chip">🎨 Design <span class="chip-remove">×</span></div>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 12px;" onclick="showToast('Add interests coming soon!')">
+                            + Add Interest
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">LinkedIn</label>
+                        <input type="url" class="form-input" placeholder="linkedin.com/in/yourname" id="profileLinkedIn">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Twitter</label>
+                        <input type="text" class="form-input" placeholder="@yourhandle" id="profileTwitter">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Screen -->
+        <div class="screen" id="settings">
+            <div class="header">
+                <div class="header-top">
+                    <button class="back-btn" onclick="navigateTo('rekindle')">←</button>
+                    <div></div>
+                </div>
+                <div class="header-title">Settings</div>
+                <div class="header-subtitle">Customize your experience</div>
+            </div>
+            
+            <div class="content">
+                <div class="settings-group">
+                    <div class="settings-group-title">Account</div>
+                    <div class="setting-item" onclick="navigateTo('profile')">
+                        <div class="setting-info">
+                            <div class="setting-label">Edit Profile</div>
+                            <div class="setting-description">Update your photo, bio, and interests</div>
+                        </div>
+                        <div class="setting-chevron">›</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Email</div>
+                        </div>
+                        <div class="setting-value">alex@example.com</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Change Password</div>
+                        </div>
+                        <div class="setting-chevron">›</div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">Notifications</div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Push Notifications</div>
+                            <div class="setting-description">Get alerted when mutuals activate ReKindle</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Email Notifications</div>
+                            <div class="setting-description">Receive event updates and summaries</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Navigator Prompts</div>
+                            <div class="setting-description">Get daily relationship growth missions</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">Privacy</div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Profile Visibility</div>
+                            <div class="setting-description">Who can see your profile</div>
+                        </div>
+                        <div class="setting-value">Event Attendees</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Show Online Status</div>
+                            <div class="setting-description">Let mutuals know when you're active</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Data & Privacy</div>
+                        </div>
+                        <div class="setting-chevron">›</div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">About</div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Version</div>
+                        </div>
+                        <div class="setting-value">1.0.0 (Beta)</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Terms of Service</div>
+                        </div>
+                        <div class="setting-chevron">›</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Privacy Policy</div>
+                        </div>
+                        <div class="setting-chevron">›</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 20px; color: #ff4757; border-color: #ff4757;">
+                    Log Out
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Screen -->
+        <div class="screen" id="chat">
+            <div class="chat-header">
+                <button class="back-btn" onclick="navigateTo('rekindle')" style="background: #f0f0f0; color: #666;">←</button>
+                <div class="chat-avatar">👩‍💻</div>
+                <div class="chat-info">
+                    <div class="chat-name">Maya Patel</div>
+                    <div class="chat-status">
+                        <span class="status-dot"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="navigateTo('rekindle')" style="background: #f0f0f0; color: #666;">⋮</button>
+            </div>
+            
+            <div class="chat-messages">
+                <div class="context-banner">
+                    <span class="context-icon">🎮</span>
+                    <div class="context-text">
+                        <strong>You both attended GameDev Mixer</strong><br>
+                        Jan 15, 2025 • Student Center
+                    </div>
+                </div>
+                
+                <div class="message received">
+                    <div>
+                        <div class="message-bubble">
+                            Hey! Great to reconnect through ReKindle! 🎉
+                        </div>
+                        <div class="message-time">10:32 AM</div>
+                    </div>
+                </div>
+                
+                <div class="message received">
+                    <div>
+                        <div class="message-bubble">
+                            I really enjoyed talking about Unity development at the mixer. Are you still working on that VR project?
+                        </div>
+                        <div class="message-time">10:33 AM</div>
+                    </div>
+                </div>
+                
+                <div class="message sent">
+                    <div>
+                        <div class="message-bubble">
+                            Yes! We just launched the beta last week. Would love to get your feedback on it!
+                        </div>
+                        <div class="message-time">10:35 AM</div>
+                    </div>
+                </div>
+                
+                <div class="message sent">
+                    <div>
+                        <div class="message-bubble">
+                            Are you free to grab coffee sometime this week to chat more about it?
+                        </div>
+                        <div class="message-time">10:35 AM</div>
+                    </div>
+                </div>
+                
+                <div class="message received">
+                    <div>
+                        <div class="message-bubble">
+                            Absolutely! Thursday afternoon works for me. Let's do it! ☕
+                        </div>
+                        <div class="message-time">10:37 AM</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" placeholder="Type a message..." id="messageInput">
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="navigateTo('eventDetails')">
+                <span>🎫</span>
+                <span class="nav-label">Events</span>
+            </div>
+            <div class="nav-item active" onclick="navigateTo('rekindle')">
+                <span>🔥</span>
+                <span class="nav-label">ReKindle</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('chat')">
+                <span>💬</span>
+                <span class="nav-label">Messages</span>
+                <span class="nav-badge">2</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('settings')">
+                <span>⚙️</span>
+                <span class="nav-label">Settings</span>
+            </div>
+        </div>
+        
+        <div class="toast" id="toast"></div>
+    </div>
+    
+    <script>
+        // Navigation
+        function navigateTo(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Show target screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update nav bar
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Log navigation
+            console.log(`📱 Navigated to: ${screenId}`);
+        }
+        
+        // Toggle setting
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+            const isActive = element.classList.contains('active');
+            console.log('⚙️ Setting toggled:', isActive ? 'ON' : 'OFF');
+            showToast(isActive ? 'Setting enabled' : 'Setting disabled');
+        }
+        
+        // Save profile
+        function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            const bio = document.getElementById('profileBio').value;
+            const location = document.getElementById('profileLocation').value;
+            
+            console.log('💾 Profile saved:', { name, bio, location });
+            showToast('Profile updated successfully!');
+            
+            setTimeout(() => {
+                navigateTo('settings');
+            }, 1500);
+        }
+        
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            console.log('💬 Message sent:', message);
+            showToast('Message sent');
+            input.value = '';
+            
+            // Add message to chat (demo)
+            const messagesContainer = document.querySelector('.chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message sent';
+            messageEl.innerHTML = `
+                <div>
+                    <div class="message-bubble">${message}</div>
+                    <div class="message-time">Just now</div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageEl);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Initialize
+        console.log('✅ ReKindle App Loaded');
+        console.log('📱 Available screens:', ['eventDetails', 'profile', 'settings', 'chat']);
+        console.log('🎯 Try navigating between screens using bottom navigation');
+    </script>
+</body>
+</html>
